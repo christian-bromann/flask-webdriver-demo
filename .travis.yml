@@ -4,8 +4,16 @@ python:
   - '2.7'
   - pypy
 
+addons:
+  sauce_connect: true
+
 before_script:
-  - "flask --app=flaskr initdb"
-  - "flask --app=flaskr run &"
+- "flask --app=flaskr initdb"
+- "flask --app=flaskr run &"
 
 script: "cd test && python -m unittest discover"
+
+env:
+  global:
+  - secure: Wqkh+c0d5R2r667QgeeQPBGaXqUhqasYGUOx9yiSbJMNw3zEKg/iQ5Yjnkd6KwRUGReDUs9hJHumUrqWtg8q6WvsUyNttwTVAAEeajwf1nv9g6jhy7xdXqjzUyN2HDW/JTJ51Kwz1S6q93/5MFjfNc52thLVRXoKrbLZEzkPaDw=
+  - secure: i/RgEOxzoHyE9D2gs73J4uqWwAuJ6Ur12dMWFdMAJBSEVJA+0tBrviKXCwEuyrD+TtROjuUBjdTdtsE/3+bBuh45MniNY9PhYk9EFHwjAuZMfmEmaNn0jP0Az9DOdPADBrA2syOiqRO1Vscdl0CoZbsRAyZrzxHJXrs0b8pNem0=
