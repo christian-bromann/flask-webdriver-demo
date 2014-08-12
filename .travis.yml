@@ -5,3 +5,4 @@ python:
   - '3.3'
   - pypy
 
+script: "cd test && python -m unittest discover"
