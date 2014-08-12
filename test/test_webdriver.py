@@ -10,12 +10,16 @@ from sauceclient import SauceClient
 USERNAME = os.environ.get('SAUCE_USERNAME', os.environ.get('SAUCE_USERNAME'))
 ACCESS_KEY = os.environ.get(
     'SAUCE_ACCESS_KEY', os.environ.get('SAUCE_ACCESS_KEY'))
+FLASK_USERNAME = 'admin'
+FLASK_PASSWORD = 'default'
+
 sauce = SauceClient(USERNAME, ACCESS_KEY)
 
-browsers = [{"platform": "Windows 8",
-             "browserName": "chrome",
-             "version": "34",
-             "tags": ["python", "chrome", "webdriver"]},
+browsers = [{
+            "platform": "Windows 8",
+            "browserName": "chrome",
+            "version": "34",
+            "tags": ["python", "chrome", "webdriver"]},
             {"platform": "Windows 8",
              "browserName": "firefox",
              "version": "29",
@@ -55,29 +59,64 @@ class SauceSampleTest(unittest.TestCase):
         )
         self.driver.implicitly_wait(30)
 
-    def test_login(self):
-
+    def login(self):
         # go to login page
         self.driver.get('http://localhost:5000/login')
 
         # enter user name
         name = self.driver.find_element_by_css_selector(
             'input[name="username"]')
-        name.send_keys('admin')
+        name.send_keys(FLASK_USERNAME)
 
         # enter password
         pw = self.driver.find_element_by_css_selector(
             'input[name="password"]')
-        pw.send_keys('default')
+        pw.send_keys(FLASK_PASSWORD)
 
         # click submit
         button = self.driver.find_element_by_css_selector(
             'input[value="Login"]')
         button.click()
 
+    def test_login(self):
+
+        # login
+        self.login()
+
         # login check
         message = self.driver.find_element_by_css_selector('.flash').text
         assert "You were logged in" in message
+
+    def test_post(self):
+
+        self.login()
+
+        # go to main page
+        self.driver.get('http://localhost:5000')
+
+        # enter title
+        title = self.driver.find_element_by_css_selector(
+            'input[name="title"]')
+        title.send_keys('Sauce Labs Python test')
+
+        # enter text
+        textarea = self.driver.find_element_by_css_selector(
+            'textarea')
+        textarea.send_keys('Hi, there!')
+
+        # click submit
+        button = self.driver.find_element_by_css_selector(
+            'input[value="Share"]')
+        button.click()
+
+        # check if entry was posted successfully
+        flash = self.driver.find_element_by_css_selector('.flash').text
+        assert "New entry was successfully posted" in flash
+
+        # check if content is correct
+        post = self.driver.find_element_by_css_selector(
+            'body > div > ul > li:nth-child(1)').text
+        assert "Sauce Labs Python test\nHi, there!" in post
 
     def tearDown(self):
 
