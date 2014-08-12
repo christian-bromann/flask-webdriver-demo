@@ -4,6 +4,12 @@ import new
 import unittest
 from selenium import webdriver
 from sauceclient import SauceClient
+from subprocess import call
+
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.sys.path.insert(0, parentdir)
+
+import flaskr
 
 # it's best to remove the hardcoded defaults and always get these values
 # from environment variables
@@ -15,15 +21,18 @@ FLASK_PASSWORD = 'default'
 
 sauce = SauceClient(USERNAME, ACCESS_KEY)
 
-browsers = [{
-            "platform": "Windows 8",
-            "browserName": "chrome",
-            "version": "34",
-            "tags": ["python", "chrome", "webdriver"]},
+browsers = [{"platform": "Windows 8",
+             "browserName": "chrome",
+             "version": "34",
+             "tags": ["python", "chrome", "webdriver"]},
             {"platform": "Windows 8",
              "browserName": "firefox",
              "version": "29",
              "tags": ["python", "firefox", "webdriver"]},
+            {"platform": "Windows 8.1",
+             "browserName": "internet explorer",
+             "version": "11",
+             "tags": ["python", "internet explorer", "webdriver"]},
             {"browserName": "Safari",
              "platformName": "iOS",
              "appium-version": "1.0",
@@ -49,6 +58,10 @@ def on_platforms(platforms):
 class SauceSampleTest(unittest.TestCase):
 
     def setUp(self):
+
+        # clear DB
+        flaskr.init_db()
+
         self.desired_capabilities['name'] = "flask app test"
         self.desired_capabilities['username'] = USERNAME
         self.desired_capabilities['access-key'] = ACCESS_KEY
@@ -122,8 +135,10 @@ class SauceSampleTest(unittest.TestCase):
 
         try:
             if sys.exc_info() == (None, None, None):
-                sauce.jobs.update_job(self.driver.session_id, passed=True)
+                sauce.jobs.update_job(
+                    self.driver.session_id, passed=True, public=True)
             else:
-                sauce.jobs.update_job(self.driver.session_id, passed=False)
+                sauce.jobs.update_job(
+                    self.driver.session_id, passed=False, public=True)
         finally:
             self.driver.quit()
