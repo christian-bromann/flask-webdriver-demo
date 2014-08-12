@@ -6,6 +6,6 @@ python:
 
 before_script:
   - "flask --app=flaskr initdb"
-  - "flask --app=flaskr run"
+  - "flask --app=flaskr run &"
 
 script: "cd test && python -m unittest discover"
