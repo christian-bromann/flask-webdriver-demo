@@ -69,6 +69,8 @@ class SauceSampleTest(unittest.TestCase):
         if os.environ.get('TRAVIS_BUILD_NUMBER'):
             self.desired_capabilities[
                 'build'] = os.environ.get('TRAVIS_BUILD_NUMBER')
+            self.desired_capabilities[
+                'tunnel-identifier'] = os.environ.get('TRAVIS_JOB_NUMBER')
 
         self.driver = webdriver.Remote(
             desired_capabilities=self.desired_capabilities,
