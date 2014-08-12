@@ -9,9 +9,13 @@
     :license: BSD, see LICENSE for more details.
 """
 import os
-import flaskr
 import unittest
 import tempfile
+
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.sys.path.insert(0, parentdir)
+
+import flaskr
 
 
 class FlaskrTestCase(unittest.TestCase):
