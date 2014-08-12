@@ -2,7 +2,10 @@ language: python
 
 python:
   - '2.7'
-  - '3.3'
   - pypy
+
+before_script:
+  - "flask --app=flaskr initdb"
+  - "flask --app=flaskr run"
 
 script: "cd test && python -m unittest discover"
