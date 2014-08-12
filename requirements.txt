@@ -1,4 +1,4 @@
--e git+git@github.com:christian-bromann/flask.git@1d55b8983efdc840b83ae6ccc4e496165010c8d1#egg=Flask-origin/HEAD
+-e git://github.com/christian-bromann/flask.git#egg=Flask
 Jinja2==2.7.3
 MarkupSafe==0.23
 Werkzeug==0.9.6
