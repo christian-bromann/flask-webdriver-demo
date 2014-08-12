@@ -62,9 +62,13 @@ class SauceSampleTest(unittest.TestCase):
         # clear DB
         flaskr.init_db()
 
-        self.desired_capabilities['name'] = "flask app test"
+        self.desired_capabilities['name'] = 'flask app test'
         self.desired_capabilities['username'] = USERNAME
         self.desired_capabilities['access-key'] = ACCESS_KEY
+
+        if os.environ.get('TRAVIS_BUILD_NUMBER'):
+            self.desired_capabilities[
+                'build'] = os.environ.get('TRAVIS_BUILD_NUMBER')
 
         self.driver = webdriver.Remote(
             desired_capabilities=self.desired_capabilities,
