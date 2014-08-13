@@ -53,8 +53,9 @@ $ travis encrypt SAUCE_USERNAME=YOUR_USERNAME --add
 $ travis encrypt SAUCE_ACCESS_KEY=YOUR_ACCESS_KEY --add
 ```
 
-Run the test via
+Download and run [Sauce Connect](https://docs.saucelabs.com/reference/sauce-connect/).
+After that start the test by executing:
 
 ```sh
-nosetests --processes=30
+python test.py
 ```

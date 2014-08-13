@@ -2,13 +2,14 @@ import os
 import sys
 import new
 import unittest
+import time
 from selenium import webdriver
 from sauceclient import SauceClient
 
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+parentdir = os.path.dirname(os.path.abspath(__file__))
 os.sys.path.insert(0, parentdir)
 
-import flaskr
+from flaskr import app, get_db
 
 # it's best to remove the hardcoded defaults and always get these values
 # from environment variables
@@ -20,25 +21,25 @@ FLASK_PASSWORD = 'default'
 
 sauce = SauceClient(USERNAME, ACCESS_KEY)
 
-browsers = [{"platform": "Windows 8",
-             "browserName": "chrome",
-             "version": "34",
-             "tags": ["python", "chrome", "webdriver"]},
-            {"platform": "Windows 8",
-             "browserName": "firefox",
-             "version": "29",
-             "tags": ["python", "firefox", "webdriver"]},
-            {"platform": "Windows 8.1",
-             "browserName": "internet explorer",
-             "version": "11",
-             "tags": ["python", "internet explorer", "webdriver"]},
-            {"browserName": "Safari",
-             "platformName": "iOS",
-             "appium-version": "1.0",
-             "platformVersion": "7.1",
-             "deviceName": "iPhone Simulator",
-             "device-orientation": "portrait",
-             "tags": ["python", "Safari", "appium"]
+browsers = [{'platform': 'Windows 8',
+             'browserName': 'chrome',
+             'version': '34',
+             'tags': ['python', 'chrome', 'webdriver']},
+            {'platform': 'Windows 8',
+             'browserName': 'firefox',
+             'version': '29',
+             'tags': ['python', 'firefox', 'webdriver']},
+            {'platform': 'Windows 8.1',
+             'browserName': 'internet explorer',
+             'version': '11',
+             'tags': ['python', 'internet explorer', 'webdriver']},
+            {'browserName': 'Safari',
+             'platformName': 'iOS',
+             'appium-version': '1.0',
+             'platformVersion': '7.1',
+             'deviceName': 'iPhone Simulator',
+             'device-orientation': 'portrait',
+             'tags': ['python', 'Safari', 'appium']
              }]
 
 
@@ -48,7 +49,7 @@ def on_platforms(platforms):
         for i, platform in enumerate(platforms):
             d = dict(base_class.__dict__)
             d['desired_capabilities'] = platform
-            name = "%s_%s" % (base_class.__name__, i + 1)
+            name = '%s_%s' % (base_class.__name__, i + 1)
             module[name] = new.classobj(name, (base_class,), d)
     return decorator
 
@@ -57,11 +58,6 @@ def on_platforms(platforms):
 class SauceSampleTest(unittest.TestCase):
 
     def setUp(self):
-
-        # clear DB
-        print flaskr.app.config
-        with flaskr.app.app_context():
-            flaskr.init_db()
 
         self.desired_capabilities['name'] = 'flask app test'
         self.desired_capabilities['username'] = USERNAME
@@ -75,7 +71,7 @@ class SauceSampleTest(unittest.TestCase):
 
         self.driver = webdriver.Remote(
             desired_capabilities=self.desired_capabilities,
-            command_executor="http://localhost:4445/wd/hub"
+            command_executor='http://localhost:4445/wd/hub'
         )
         self.driver.implicitly_wait(30)
 
@@ -98,16 +94,16 @@ class SauceSampleTest(unittest.TestCase):
             'input[value="Login"]')
         button.click()
 
-    def test_login(self):
+    def tesst_login(self):
 
         # login
         self.login()
 
         # login check
         message = self.driver.find_element_by_css_selector('.flash').text
-        assert "You were logged in" in message
+        assert 'You were logged in' in message
 
-    def test_post(self):
+    def tesst_post(self):
 
         self.login()
 
@@ -131,12 +127,32 @@ class SauceSampleTest(unittest.TestCase):
 
         # check if entry was posted successfully
         flash = self.driver.find_element_by_css_selector('.flash').text
-        assert "New entry was successfully posted" in flash
+        assert 'New entry was successfully posted' in flash
 
         # check if content is correct
         post = self.driver.find_element_by_css_selector(
             'body > div > ul > li:nth-child(1)').text
-        assert "Sauce Labs Python test\nHi, there!" in post
+        assert 'Sauce Labs Python test\nHi, there!' in post
+
+    def test_mocked_post(self):
+
+        print 'dsadsdasad'
+
+        ts = time.time()
+
+        with app.app_context():
+            db = get_db()
+            db.execute('insert into entries (title, text) values (?, ?)',
+                       ['Current timestamp', ts])
+            db.commit()
+
+        # go to main page
+        self.driver.get('http://localhost:5000')
+
+        # check if mcoked content is correct
+        post = self.driver.find_element_by_css_selector(
+            'body > div > ul > li:nth-child(1)').text
+        assert 'Current timestamp\n%d' % ts in post
 
     def tearDown(self):
 

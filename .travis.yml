@@ -10,7 +10,7 @@ addons:
 before_script:
 - "flask --app=flaskr run &"
 
-script: "nosetests --processes=30"
+script: "python test.py"
 
 env:
   global:
