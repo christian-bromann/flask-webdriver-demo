@@ -68,9 +68,18 @@ $ travis encrypt SAUCE_USERNAME=YOUR_USERNAME --add
 $ travis encrypt SAUCE_ACCESS_KEY=YOUR_ACCESS_KEY --add
 ```
 
+Make sure that your Sauce credentials are available as environment
+variables in your terminal, run the following command:
+
+```sh
+echo "export SAUCE_USERNAME=YOUR_USERNAME
+export SAUCE_ACCESS_KEY=YOUR_ACCESS_KEY" >> ~/.bash_profile &&
+source ~/.bash_profile
+```
+
 Download and run [Sauce Connect](https://docs.saucelabs.com/reference/sauce-connect/).
 After that start the test by executing:
 
 ```sh
-$ nosetests --processes=30
+$ ./test.sh
 ```
