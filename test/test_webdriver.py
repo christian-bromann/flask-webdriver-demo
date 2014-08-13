@@ -121,7 +121,7 @@ class SauceSampleTest(unittest.TestCase):
             'body > div > ul > li:nth-child(1)').text
         assert 'Sauce Labs Python test\nHi, there!' in post
 
-    def test_mocked_post(self):
+    def test_faked_post(self):
 
         ts = time.time()
 
