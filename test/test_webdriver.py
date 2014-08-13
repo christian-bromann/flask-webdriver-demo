@@ -4,7 +4,6 @@ import new
 import unittest
 from selenium import webdriver
 from sauceclient import SauceClient
-from subprocess import call
 
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.sys.path.insert(0, parentdir)
@@ -60,7 +59,9 @@ class SauceSampleTest(unittest.TestCase):
     def setUp(self):
 
         # clear DB
-        flaskr.init_db()
+        print flaskr.app.config
+        with flaskr.app.app_context():
+            flaskr.init_db()
 
         self.desired_capabilities['name'] = 'flask app test'
         self.desired_capabilities['username'] = USERNAME
