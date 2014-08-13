@@ -32,7 +32,15 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 def connect_db():
     """Connects to the specific database."""
-    rv = sqlite3.connect('/tmp/flaskr.db')
+
+    dbPath = '/tmp/flaskr.db'
+
+    # to ensure that each build runs tests on an isolated DB
+    # we need to set different DB paths
+    if os.environ.get('TRAVIS_JOB_NUMBER'):
+        dbPath = '/tmp/flaskr-%s.db' % os.environ.get('TRAVIS_JOB_NUMBER')
+
+    rv = sqlite3.connect(dbPath)
     rv.row_factory = sqlite3.Row
     return rv
 
@@ -67,7 +75,7 @@ def close_db(error):
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select title, text from entries order by id desc')
+    cur = db.execute('select user, title, text from entries order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 

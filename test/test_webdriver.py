@@ -33,13 +33,28 @@ browsers = [{'platform': 'Windows 8',
              'browserName': 'internet explorer',
              'version': '11',
              'tags': ['python', 'internet explorer', 'webdriver']},
+            {'platform': 'OS X 10.9',
+             'browserName': 'safari',
+             'version': '7',
+             'tags': ['python', 'safari', 'webdriver']},
             {'browserName': 'Safari',
-             'platformName': 'iOS',
-             'appium-version': '1.0',
-             'platformVersion': '7.1',
+             'platform': 'OS X 10.9',
+             'version': '7.1',
              'deviceName': 'iPhone Simulator',
              'device-orientation': 'portrait',
-             'tags': ['python', 'Safari', 'appium']
+             'tags': ['python', 'Safari', 'iphone']},
+            {'browserName': 'Safari',
+             'platform': 'OS X 10.9',
+             'version': '7.1',
+             'deviceName': 'iPad Simulator',
+             'device-orientation': 'portrait',
+             'tags': ['python', 'Safari', 'ipad']},
+            {'browserName': 'android',
+             'platform': 'Linux',
+             'platformVersion': '4.4',
+             'deviceName': 'Android',
+             'device-orientation': 'portrait',
+             'tags': ['python', 'andoid']
              }]
 
 
@@ -49,6 +64,7 @@ def on_platforms(platforms):
         for i, platform in enumerate(platforms):
             d = dict(base_class.__dict__)
             d['desired_capabilities'] = platform
+            d['user'] = 'user%d' % i
             name = '%s_%s' % (base_class.__name__, i + 1)
             module[name] = new.classobj(name, (base_class,), d)
     return decorator
@@ -59,7 +75,7 @@ class SauceSampleTest(unittest.TestCase):
 
     def setUp(self):
 
-        self.desired_capabilities['name'] = 'flask app test'
+        self.desired_capabilities['name'] = str(self)
         self.desired_capabilities['username'] = USERNAME
         self.desired_capabilities['access-key'] = ACCESS_KEY
 
@@ -136,22 +152,21 @@ class SauceSampleTest(unittest.TestCase):
 
     def test_mocked_post(self):
 
-        print 'dsadsdasad'
-
         ts = time.time()
 
+        # mock data
         with app.app_context():
             db = get_db()
-            db.execute('insert into entries (title, text) values (?, ?)',
-                       ['Current timestamp', ts])
+            db.execute(
+                'insert into entries (user, title, text) values (?, ?, ?)',
+                [self.user, 'Current timestamp', ts])
             db.commit()
 
         # go to main page
         self.driver.get('http://localhost:5000')
 
         # check if mcoked content is correct
-        post = self.driver.find_element_by_css_selector(
-            'body > div > ul > li:nth-child(1)').text
+        post = self.driver.find_element_by_css_selector('.%s' % self.user).text
         assert 'Current timestamp\n%d' % ts in post
 
     def tearDown(self):

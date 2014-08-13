@@ -43,6 +43,21 @@ Then install all requirements:
 $ pip install -r requirements.txt
 ```
 
+## Run app
+
+If you start the application for the first time, you need to initialise
+the database first:
+
+```sh
+$ python init_db.py
+```
+
+Run the app by using the Flask CLI
+
+```sh
+$ flask --app=flaskr run
+```
+
 ## Run tests
 
 Replace the existing Sauce Labs credentials in the `.travis.yml` with
