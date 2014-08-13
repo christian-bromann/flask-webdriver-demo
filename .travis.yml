@@ -8,9 +8,10 @@ addons:
   sauce_connect: true
 
 before_script:
-- "flask --app=flaskr run &"
+  - "python init_db.py"
+  - "flask --app=flaskr run &"
 
-script: "python test.py"
+script: "nosetests --processes=30"
 
 env:
   global:
