@@ -6,7 +6,11 @@ python:
 addons:
   sauce_connect: true
 
-script: "./test.sh"
+before_script:
+  - "python init_db.py"
+  - "flask --app=flaskr run &"
+
+script: "nosetests --processes=30"
 
 env:
   global:
