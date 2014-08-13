@@ -94,7 +94,7 @@ class SauceSampleTest(unittest.TestCase):
             'input[value="Login"]')
         button.click()
 
-    def tesst_login(self):
+    def test_login(self):
 
         # login
         self.login()
@@ -103,7 +103,7 @@ class SauceSampleTest(unittest.TestCase):
         message = self.driver.find_element_by_css_selector('.flash').text
         assert 'You were logged in' in message
 
-    def tesst_post(self):
+    def test_post(self):
 
         self.login()
 
