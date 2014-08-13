@@ -3,6 +3,7 @@ import sys
 import new
 import unittest
 import time
+import json
 from selenium import webdriver
 from sauceclient import SauceClient
 
@@ -19,43 +20,13 @@ ACCESS_KEY = os.environ.get(
 FLASK_USERNAME = 'admin'
 FLASK_PASSWORD = 'default'
 
+# initialise sauce client to update jobs
 sauce = SauceClient(USERNAME, ACCESS_KEY)
 
-browsers = [{'platform': 'Windows 8',
-             'browserName': 'chrome',
-             'version': '34',
-             'tags': ['python', 'chrome', 'webdriver']},
-            {'platform': 'Windows 8',
-             'browserName': 'firefox',
-             'version': '29',
-             'tags': ['python', 'firefox', 'webdriver']},
-            {'platform': 'Windows 8.1',
-             'browserName': 'internet explorer',
-             'version': '11',
-             'tags': ['python', 'internet explorer', 'webdriver']},
-            {'platform': 'OS X 10.9',
-             'browserName': 'safari',
-             'version': '7',
-             'tags': ['python', 'safari', 'webdriver']},
-            {'browserName': 'Safari',
-             'platform': 'OS X 10.9',
-             'version': '7.1',
-             'deviceName': 'iPhone Simulator',
-             'device-orientation': 'portrait',
-             'tags': ['python', 'Safari', 'iphone']},
-            {'browserName': 'Safari',
-             'platform': 'OS X 10.9',
-             'version': '7.1',
-             'deviceName': 'iPad Simulator',
-             'device-orientation': 'portrait',
-             'tags': ['python', 'Safari', 'ipad']},
-            {'browserName': 'android',
-             'platform': 'Linux',
-             'platformVersion': '4.4',
-             'deviceName': 'Android',
-             'device-orientation': 'portrait',
-             'tags': ['python', 'andoid']
-             }]
+# load browser matrix from config.json
+config = open('%s/config.json' % os.path.dirname(os.path.abspath(__file__)))
+browserMatrix = json.load(config)
+config.close()
 
 
 def on_platforms(platforms):
@@ -70,7 +41,7 @@ def on_platforms(platforms):
     return decorator
 
 
-@on_platforms(browsers)
+@on_platforms(browserMatrix['browser'])
 class SauceSampleTest(unittest.TestCase):
 
     def setUp(self):

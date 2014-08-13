@@ -72,5 +72,5 @@ Download and run [Sauce Connect](https://docs.saucelabs.com/reference/sauce-conn
 After that start the test by executing:
 
 ```sh
-python test.py
+$ nosetests --processes=30
 ```
